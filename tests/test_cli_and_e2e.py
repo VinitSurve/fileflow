@@ -479,7 +479,10 @@ def test_protected_paths_refused(run: Callable[..., Any], isolated_env: Path) ->
     for protected in ("/", "/System", "/Library", str(isolated_env), str(isolated_env / ".ssh")):
         p = Path(protected)
         if not p.exists():
-            p.mkdir(parents=True, exist_ok=True)
+            try:
+                p.mkdir(parents=True, exist_ok=True)
+            except OSError:
+                continue
         res = run("fileflow", "organize", str(p), "--preview")
         assert res.exit_code == int(ExitCode.REFUSED), f"Expected REFUSED for {p}"
 
