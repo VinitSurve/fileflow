@@ -8,21 +8,22 @@ on:
 
 jobs:
   test:
-    name: Test (Python ${{{{ matrix.python-version }}}} on ${{{{ matrix.os }}}})
-    runs-on: ${{{{ matrix.os }}}}
+    name: Test (Python ${{ matrix.python-version }} on ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        python-version: ["3.11", "3.12", "3.13"]
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python ${{{{ matrix.python-version }}}}
+      - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
-          python-version: ${{{{ matrix.python-version }}}}
+          python-version: ${{ matrix.python-version }}
+          allow-prereleases: true
           cache: "pip"
 
       - name: Install dependencies
@@ -37,7 +38,7 @@ jobs:
         run: ruff format --check src tests
 
       - name: Run Mypy Type Checking
-        run: mypy
+        run: mypy src
 
       - name: Run Pytest
         run: pytest -v
